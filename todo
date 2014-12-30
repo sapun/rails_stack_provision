@@ -1,0 +1,19 @@
+##
+For app node
+  Install Nginx
+  Install libs ()
+  Install Ruby over Rbenv
+  Create directories
+  Generate configs
+For db node
+  Install Postgresql from repo
+  Install Postgresql contrib
+  Replication
+For staff
+  Redis
+  Elasticsearch
+For hostmachine
+  Install hostmachine
+  Install and setup haproxy
+  Install openvz
+  Tasks - create container, add dns name, add to haproxy, del from haproxy
