@@ -1,0 +1,36 @@
+#!/bin/bash
+# Run with:
+# ./ansible -K --limit production provision.yml
+#
+# ./play                               # провижен по конфигу main.yml на testing
+# ./play production                    # провижен main на продакшен
+
+# set -x
+
+function usage
+{
+    echo "usage: ./play [inventory] [playbook] [any ansible options]"
+}
+
+
+##### Main
+
+# interactive=
+inventory="testing"
+playbook="main.yml"
+
+
+if [ -f "hosts/$1" ]
+then
+  inventory=$1
+  shift
+fi
+
+if [ -f "$1" ]
+then
+   playbook=$1
+   shift
+fi
+
+echo "Starting a $inventory play of $playbook with arguments '$@'..."
+/usr/bin/env ansible-playbook -s "$playbook" -i "hosts/$inventory" "$@"

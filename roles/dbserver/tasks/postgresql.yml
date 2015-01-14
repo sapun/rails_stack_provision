@@ -1,0 +1,104 @@
+- name:       --> Install PostgreSQL dependencies
+  with_items:
+              - python-pycurl
+              - python-psycopg2
+  apt:
+    pkg:      '{{item}}'
+    state:    'latest'
+
+
+- name:       --> Add PostgreSQL repo key
+  apt_key:
+    id:       'ACCC4CF8'
+    url:      'https://www.postgresql.org/media/keys/ACCC4CF8.asc'
+    state:    'present'
+
+
+- name:       --> Add PostgreSQL repo
+  apt_repository:
+    repo:     'deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main'
+    update_cache: yes
+
+
+- name:       --> Install PostgreSQL
+  with_items:
+              - postgresql-9.3
+              - postgresql-contrib-9.3
+  apt:
+    pkg:      '{{ item }}'
+    state:    'latest'
+
+- name:   --> Start PostgreSQL
+  service:
+    name: 'postgresql'
+    state: 'started'
+    enabled: 'yes'
+
+- name:       --> Copy valid pg_hba.conf
+  template:
+    src:      'pg_hba.conf.j2'
+    dest:     '/etc/postgresql/9.3/main/pg_hba.conf'
+  notify:
+    - restart PostgreSQL
+
+
+- name:       --> Copy valid postgresql.conf
+  template:
+    src:      'postgresql.conf.j2'
+    dest:     '/etc/postgresql/9.3/main/postgresql.conf'
+  notify:
+    - restart PostgreSQL
+
+- name:       --> Create the postgresql user for application
+  postgresql_user:
+    name:     '{{ deploy_user }}'
+    password: '{{ db_password }}'
+    state:    'present'
+  sudo:       yes
+  sudo_user:  postgres
+
+- name:       --> Create the postgresql database for application
+  postgresql_db:
+    name:     '{{ db_name }}'
+    owner:    '{{ deploy_user }}'
+    state:    'present'
+    lc_collate: 'en_US.UTF-8'
+  sudo:       yes
+  sudo_user:  postgres
+
+- name:       --> Instantiate PostgreSQL Extensions
+  with_items:
+    - pgcrypto
+    - hstore
+    - pg_trgm
+  shell:      'psql -d {{ db_name }} -c "CREATE EXTENSION IF NOT EXISTS {{ item }} WITH SCHEMA public;"'
+  sudo:       yes
+  sudo_user:  postgres
+
+#- name:       --> Create Collation
+#  shell:      'psql -d {{ db_name }} -c "CREATE COLLATION russian (LOCALE = 'ru_RU.utf8');"'
+#  sudo:       yes
+#  sudo_user:  postgres
+
+
+- name:       --> Instantiate PostgreSQL Languages
+  with_items:
+    - plpgsql
+  shell:     'psql -d {{ db_name }} -c "CREATE OR REPLACE LANGUAGE {{ item }};"'
+  sudo:       yes
+  sudo_user:  postgres
+
+- name:       --> Grant privilege to use PostgreSQL Languages
+  with_items:
+    - plpgsql
+  postgresql_privs:
+    db:     '{{ db_name }}'
+    privs:  'USAGE'
+    type:   'language'
+    objs:   '{{ item }}'
+    roles:  '{{ deploy_user }}'
+    grant_option: yes
+  sudo:       yes
+  sudo_user:  postgres
+  tags:
+    - debug

@@ -1,0 +1,4 @@
+---
+- include: nginx.yml
+- include: deplibs.yml
+- include: dirs_configs.yml

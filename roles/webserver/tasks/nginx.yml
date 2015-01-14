@@ -1,0 +1,13 @@
+---
+- name: Install Nginx
+  apt:
+    name: 'nginx'
+    state: present
+
+- name: Configuration Nginx
+  template: src=etc/nginx/nginx.j2 dest=/etc/nginx/nginx.conf
+  notify: restarting nginx
+
+- name: Host Configuration
+  template: src=etc/nginx/sites-enabled/hostconf.j2 dest=/etc/nginx/sites-enabled/{{ app_name }}.conf
+  notify: reloading nginx

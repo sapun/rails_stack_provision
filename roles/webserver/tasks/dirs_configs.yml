@@ -1,0 +1,15 @@
+---
+- name: Create application directory
+  file: path={{ app_path }} owner={{ deploy_user }} group={{ deploy_user }} state=directory
+
+- name: Capistrano | Create shared directory
+  file: path={{ app_path }}/shared/ state=directory owner={{ deploy_user }} group={{ deploy_user }} force=no
+
+- name: Capistrano | Create current directory
+  file: path={{ app_path }}/current/ state=directory owner={{ deploy_user }} group={{ deploy_user }} force=no
+
+- name: Capistrano | Create config directory
+  file: path={{ app_path }}/shared/config/ state=directory owner={{ deploy_user }} group={{ deploy_user }} force=no
+
+- name: Database config
+  template: src=shared/config/database.j2 dest={{ app_path}}/shared/config/database.yml

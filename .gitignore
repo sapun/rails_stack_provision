@@ -22,6 +22,8 @@
 .yardopts
 .bin
 .vagrant
+group_vars/secrets
+files/keys/developers.pub
 config/darberry.yml
 config/mailchimp.yml
 config/alfabank.yml
@@ -50,6 +52,6 @@ bin/*
 .tddium*
 *.sublime*
 playground/
-Vagrantfile
 *public/uploads/tmp
 *~
+*.log

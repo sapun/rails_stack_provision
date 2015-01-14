@@ -1,0 +1,26 @@
+---
+-
+  name:  'Configure application servers'
+  hosts: 'webservers'
+  remote_user: 'root'
+  vars_files:
+    - group_vars/common
+    - group_vars/webservers
+    - group_vars/secrets
+  roles:
+    - role: 'common'
+    - role: zzet.rbenv
+    - role: webserver
+-
+  name: 'Configure database servers'
+  remote_user: 'root'
+  hosts: 'dbservers'
+  vars_files:
+    - group_vars/common
+    - group_vars/dbservers
+    - group_vars/secrets
+  roles:
+    - role: 'common'
+    - role: 'dbserver'
+
+

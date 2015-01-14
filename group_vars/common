@@ -1,0 +1,7 @@
+timezone: 'Europe/Moscow'
+deploy_user: 'deployer'
+app_name: 'mywebapp'
+locale: 'en_US.UTF-8'
+domain: 'myaebapp.local'
+db_name: '{{ app_name }}_{{ rails_env }}'
+app_path: '/home/{{ deploy_user }}/{{ app_name }}'
