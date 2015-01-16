@@ -2,7 +2,9 @@
 
 ## Instalation
 For Ubuntu
+
 apt-get install ansible
+
 ansible-galaxy install zzet.rbenv
 
 
@@ -18,9 +20,12 @@ ansible-galaxy install zzet.rbenv
 
 ## Run
 Rename sample files
+
 Put developers keys in files/keys/developers.pub and play
-- ./play  			playing main.yml on testing environment
-- ./play production	playing main.yml on production environment
+
+./play  			playing main.yml on testing environment
+
+./play production	playing main.yml on production environment
 
 
 
