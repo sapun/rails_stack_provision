@@ -9,8 +9,7 @@
     - group_vars/secrets
   roles:
     - role: 'common'
-    - role: zzet.rbenv
-    - role: webserver
+    - role: 'webserver'
 -
   name: 'Configure database servers'
   remote_user: 'root'

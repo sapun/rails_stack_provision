@@ -4,10 +4,9 @@
     name: '{{ item }}'
     state: present
   with_items: 
-    - 'nodejs'
-    - 'libmagick++-dev'
-    - 'imagemagick'
-    - 'libpq-dev'
-
-- name: Install bundler
-  shell: /usr/local/rbenv/shims/gem install bundler
+    - '{{app_dependencies}}'
+- name:       'Install ruby dependencies'
+  apt:
+    pkg:      '{{ item }}'
+    state:    'installed'
+  with_items: 'ruby_dependencies'
