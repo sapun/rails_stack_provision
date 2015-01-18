@@ -1,1 +1,2 @@
-db_data_directory: '/var/lib/postgresql/9.3/main'
+pg_version: '9.3'
+db_data_directory: '/var/lib/postgresql/{{pg_version}}/main'

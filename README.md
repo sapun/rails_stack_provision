@@ -1,6 +1,6 @@
 # Rails server playbook for Ansible
 
-## Instalation
+## Installation
 For Ubuntu
 
 apt-get install ansible

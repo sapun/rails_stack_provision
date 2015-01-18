@@ -3,3 +3,10 @@
   service:
     name:     'postgresql'
     state:    'restarted'
+    arguments: '{{pg_version}}'
+
+- name: 'start PostgreSQL'
+  service:
+    name:   'postgresql'
+    state:   'started'
+    arguments: '{{pg_version}}'

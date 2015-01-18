@@ -22,8 +22,8 @@
 
 - name:       --> Install PostgreSQL
   with_items:
-              - postgresql-9.3
-              - postgresql-contrib-9.3
+              - postgresql-{{pg_version}}
+              - postgresql-contrib-{{pg_version}}
   apt:
     pkg:      '{{ item }}'
     state:    'latest'
@@ -31,13 +31,14 @@
 - name:   --> Start PostgreSQL
   service:
     name: 'postgresql'
-    state: 'started'
     enabled: 'yes'
+  notify:
+    - start PostgreSQL
 
 - name:       --> Copy valid pg_hba.conf
   template:
     src:      'pg_hba.conf.j2'
-    dest:     '/etc/postgresql/9.3/main/pg_hba.conf'
+    dest:     '/etc/postgresql/{{pg_version}}/main/pg_hba.conf'
   notify:
     - restart PostgreSQL
 
@@ -45,7 +46,7 @@
 - name:       --> Copy valid postgresql.conf
   template:
     src:      'postgresql.conf.j2'
-    dest:     '/etc/postgresql/9.3/main/postgresql.conf'
+    dest:     '/etc/postgresql/{{pg_version}}/main/postgresql.conf'
   notify:
     - restart PostgreSQL
 
