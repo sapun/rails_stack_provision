@@ -41,13 +41,13 @@
 
 data_directory = '{{ db_data_directory }}' # use data in another directory
 					# (change requires restart)
-hba_file = '/etc/postgresql/9.3/main/pg_hba.conf'	# host-based authentication file
+hba_file = '/etc/postgresql/{{pg_version}}/main/pg_hba.conf'	# host-based authentication file
 					# (change requires restart)
-ident_file = '/etc/postgresql/9.3/main/pg_ident.conf'	# ident configuration file
+ident_file = '/etc/postgresql/{{pg_version}}/main/pg_ident.conf'	# ident configuration file
 					# (change requires restart)
 
 # If external_pid_file is not explicitly set, no extra PID file is written.
-external_pid_file = '/var/run/postgresql/9.3-main.pid'		# write an extra PID file
+external_pid_file = '/var/run/postgresql/{{pg_version}}-main.pid'		# write an extra PID file
 					# (change requires restart)
 
 
