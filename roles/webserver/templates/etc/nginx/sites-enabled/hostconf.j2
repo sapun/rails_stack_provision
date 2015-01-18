@@ -1,6 +1,6 @@
 # {{ ansible_managed }}
 upstream {{ app_name }}_rackup {
-  server unix:///home/{{ deploy_user }}/{{ app_name }}/shared/tmp/sockets/unicorn.sock fail_timeout=0;
+  server unix://{{ app_path }}/shared/tmp/sockets/unicorn.sock fail_timeout=0;
 }
 
 server {
@@ -13,9 +13,9 @@ server {
   server_name {{ domain }};
   root /home/{{ deploy_user }}/{{ app_name }}/current/public;
 
-  proxy_set_header  X-Accel-Mapping      /home/{{ deploy_user }}/{{ app_name }}/shared/private/=/private_files/; 
+  proxy_set_header  X-Accel-Mapping      {{ app_path }}/shared/private/=/private_files/; 
  
-  if (-f /home/{{ deploy_user }}/maintenance) {
+  if (-f {{ app_path }}/maintenance) {
     return 503;
   }
 
@@ -47,7 +47,7 @@ server {
     proxy_set_header X-Nginx-Proxy true;
    
     proxy_set_header X-Sendfile-Type X-Accel-Redirect;
-    proxy_set_header X-Accel-Mapping /home/{{ deploy_user }}/{{ app_name }}/shared/private/=/private_files/; 
+    proxy_set_header X-Accel-Mapping {{ app_path }}/shared/private/=/private_files/; 
 
     proxy_hide_header X-Runtime;
     proxy_hide_header X-Rack-Cache;
@@ -94,6 +94,6 @@ server {
     }
   location /private_files/ {
     internal;
-    alias   /home/{{ deploy_user }}/{{ app_name }}/shared/private/;
+    alias   {{ app_path }}/shared/private/;
   }
 }

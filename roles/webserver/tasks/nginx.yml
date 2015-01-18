@@ -1,8 +1,13 @@
 ---
+- name: Add Nginx repo
+  apt_repository:
+    repo:  'ppa:nginx/stable'
+    update_cache: 'true'
+
 - name: Install Nginx
   apt:
     name: 'nginx'
-    state: present
+    state: latest
 
 - name: Configuration Nginx
   template: src=etc/nginx/nginx.j2 dest=/etc/nginx/nginx.conf
