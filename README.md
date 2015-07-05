@@ -6,12 +6,11 @@ For Ubuntu
 apt-get install ansible
 
 
-
 ##It installs:
 - Fix timezones, locales
 - Create deploy user with keys
 - Ruby 2.2 from brightbox repo
-- PostgreSQL 9.3
+- PostgreSQL 9.4
 - nginx
 - create dirs for capistrano
 - crete database.yml
@@ -27,3 +26,4 @@ Put developers keys in files/keys/developers.pub and play
 
 
 
+TODO: add support systemd and add new roles =)

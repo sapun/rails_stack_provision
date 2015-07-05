@@ -1,31 +1,24 @@
 ---
 # Docs: http://brightbox.com/docs/ruby/ubuntu/
-- name:       'Add Brightbox community PPA'
-  apt_repository:
-    repo:     'ppa:brightbox/ruby-ng'
-    update_cache: yes
-  tags:
-    - ruby
-    - repo
 
-- name:       'Install Ruby {{ ruby_version }}'
+- name: Add Brightbox community PPA
+  apt_repository:
+    repo: 'ppa:brightbox/ruby-ng'
+    update_cache: yes
+
+- name: Install Ruby {{ ruby_version }}
   with_items: 'ruby_packages'
   apt:
-    pkg:      '{{ item }}'
-    state:    'present'
-    force:    'yes'
-  tags:
-    - ruby
-    - deps
+    pkg: '{{ item }}'
+    state: 'present'
+    force: 'yes'
 
-- name:       'Install required Ruby gems'
+- name: Install required Ruby gems
   with_items: 'ruby_gems'
   gem:
-    name:     '{{ item }}'
-    state:    'present'
+    name: '{{ item }}'
+    state: present
     user_install: 'no'
-  tags:
-    - ruby
 
 # ---
 # # Ruby from source playbook (https://github.com/jgrowl/ansible-playbook-ruby-from-src)

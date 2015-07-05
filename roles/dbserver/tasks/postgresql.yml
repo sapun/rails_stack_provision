@@ -1,105 +1,97 @@
-- name:       --> Install PostgreSQL dependencies
+- name: Install PostgreSQL dependencies
   with_items:
-              - python-pycurl
-              - python-psycopg2
+   - python-pycurl
+   - python-psycopg2
   apt:
-    pkg:      '{{item}}'
-    state:    'latest'
+    pkg: '{{item}}'
+    state: latest
 
 
-- name:       --> Add PostgreSQL repo key
+- name: Add PostgreSQL repo key
   apt_key:
-    id:       'ACCC4CF8'
-    url:      'https://www.postgresql.org/media/keys/ACCC4CF8.asc'
-    state:    'present'
+    id: 'ACCC4CF8'
+    url: 'https://www.postgresql.org/media/keys/ACCC4CF8.asc'
+    state: present
 
 
-- name:       --> Add PostgreSQL repo
+- name: Add PostgreSQL repo
   apt_repository:
-    repo:     'deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main'
+    repo: 'deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main'
     update_cache: yes
 
 
-- name:       --> Install PostgreSQL
+- name: Install PostgreSQL
   with_items:
-              - postgresql-{{pg_version}}
-              - postgresql-contrib-{{pg_version}}
+    - postgresql-{{pg_version}}
+    - postgresql-contrib-{{pg_version}}
   apt:
-    pkg:      '{{ item }}'
-    state:    'latest'
+    pkg: '{{ item }}'
+    state: present
 
-- name:   --> Start PostgreSQL
+- name: Start PostgreSQL
   service:
     name: 'postgresql'
     enabled: 'yes'
   notify:
     - start PostgreSQL
 
-- name:       --> Copy valid pg_hba.conf
+- name: Copy valid pg_hba.conf
   template:
-    src:      'pg_hba.conf.j2'
-    dest:     '/etc/postgresql/{{pg_version}}/main/pg_hba.conf'
+    src: 'pg_hba.conf.j2'
+    dest: '/etc/postgresql/{{pg_version}}/main/pg_hba.conf'
   notify:
     - restart PostgreSQL
 
 
-- name:       --> Copy valid postgresql.conf
+- name: Copy valid postgresql.conf
   template:
-    src:      'postgresql.conf.j2'
-    dest:     '/etc/postgresql/{{pg_version}}/main/postgresql.conf'
+    src: 'postgresql.conf.j2'
+    dest: '/etc/postgresql/{{pg_version}}/main/postgresql.conf'
   notify:
     - restart PostgreSQL
 
-- name:       --> Create the postgresql user for application
+- name: Create the postgresql user for application
   postgresql_user:
-    name:     '{{ deploy_user }}'
+    name: '{{ deploy_user }}'
     password: '{{ db_password }}'
-    state:    'present'
-  sudo:       yes
-  sudo_user:  postgres
+    state: present
+  become: yes
+  become_user: postgres
 
-- name:       --> Create the postgresql database for application
+- name: Create the postgresql database for application
   postgresql_db:
-    name:     '{{ db_name }}'
-    owner:    '{{ deploy_user }}'
-    state:    'present'
+    name: '{{ db_name }}'
+    owner: '{{ deploy_user }}'
+    state: present
     lc_collate: 'en_US.UTF-8'
-  sudo:       yes
-  sudo_user:  postgres
+  become: yes
+  become_user: postgres
 
-- name:       --> Instantiate PostgreSQL Extensions
+- name: Instantiate PostgreSQL Extensions
   with_items:
     - pgcrypto
     - hstore
     - pg_trgm
-  shell:      'psql -d {{ db_name }} -c "CREATE EXTENSION IF NOT EXISTS {{ item }} WITH SCHEMA public;"'
-  sudo:       yes
-  sudo_user:  postgres
+  shell: 'psql -d {{ db_name }} -c "CREATE EXTENSION IF NOT EXISTS {{ item }} WITH SCHEMA public;"'
+  become: yes
+  become_user: postgres
 
-#- name:       --> Create Collation
-#  shell:      'psql -d {{ db_name }} -c "CREATE COLLATION russian (LOCALE = 'ru_RU.utf8');"'
-#  sudo:       yes
-#  sudo_user:  postgres
-
-
-- name:       --> Instantiate PostgreSQL Languages
+- name: Instantiate PostgreSQL Languages
   with_items:
     - plpgsql
-  shell:     'psql -d {{ db_name }} -c "CREATE OR REPLACE LANGUAGE {{ item }};"'
-  sudo:       yes
-  sudo_user:  postgres
+  shell: 'psql -d {{ db_name }} -c "CREATE OR REPLACE LANGUAGE {{ item }};"'
+  become: yes
+  become_user: postgres
 
-- name:       --> Grant privilege to use PostgreSQL Languages
+- name: Grant privilege to use PostgreSQL Languages
   with_items:
     - plpgsql
   postgresql_privs:
-    db:     '{{ db_name }}'
-    privs:  'USAGE'
-    type:   'language'
-    objs:   '{{ item }}'
-    roles:  '{{ deploy_user }}'
+    db: '{{ db_name }}'
+    privs: 'USAGE'
+    type: 'language'
+    objs: '{{ item }}'
+    roles: '{{ deploy_user }}'
     grant_option: yes
-  sudo:       yes
-  sudo_user:  postgres
-  tags:
-    - debug
+  become: yes
+  become_user: postgres

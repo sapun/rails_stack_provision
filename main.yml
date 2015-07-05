@@ -1,6 +1,6 @@
 ---
--
-  name:  'Configure application servers'
+
+- name:  'Configure application servers'
   hosts: 'webservers'
   remote_user: 'root'
   vars_files:
@@ -10,8 +10,8 @@
   roles:
     - role: 'common'
     - role: 'webserver'
--
-  name: 'Configure database servers'
+
+- name: 'Configure database servers'
   remote_user: 'root'
   hosts: 'dbservers'
   vars_files:
