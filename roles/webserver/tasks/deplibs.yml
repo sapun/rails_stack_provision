@@ -3,10 +3,11 @@
   apt:
     name: '{{ item }}'
     state: present
-  with_items: 
+  with_items:
     - '{{app_dependencies}}'
-- name:       'Install ruby dependencies'
+
+- name: 'Install ruby dependencies'
   apt:
-    pkg:      '{{ item }}'
-    state:    'installed'
+    pkg: '{{ item }}'
+    state: 'installed'
   with_items: 'ruby_dependencies'

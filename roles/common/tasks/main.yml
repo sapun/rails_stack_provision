@@ -1,44 +1,32 @@
 ---
+
 - name:       'Upgrade base system'
   apt:
     update_cache: 'yes'
-    upgrade:      'yes'
+    upgrade: 'yes'
 
 - name: ensure /etc/hosts has records for all servers in the executing inventory
-  template:  src=etc/hosts.j2 dest=/etc/hosts
-  tags:
-    - dns
+  template: src=etc/hosts.j2 dest=/etc/hosts
 
 - name: set locale to {{locale}}
   command: /usr/sbin/update-locale LANG={{locale}} LC_ALL={{locale}}
-  tags:
-    - locale
 
 - name: set /etc/localtime to {{ timezone }}
-  command: /bin/cp /usr/share/zoneinfo/{{timezone}} /etc/localtime creates=/etc/localtime
-  tags:
-    - time
-    - locale
-
+  copy: 
+    src: '/usr/share/zoneinfo/{{timezone}}' 
+    dest: '/etc/localtime'
 
 - name: set /etc/timezone to {{ timezone }}
   template: src=etc/timezone.j2 dest=/etc/timezone
   notify: update tzdata
-  tags:
-    - time
-    - locale
-    - conf
 
 - name: set hostname as {{ inventory_hostname }}
   template: src=etc/hostname.j2 dest=/etc/hostname
-  tags: 
-    - conf
 
 - name: set environment as {{ inventory_hostname }}
   template: src=etc/environment.j2 dest=/etc/environment
-  tags:
-    - conf
-- name:   --> Install basic soft and libs
+
+- name: Install basic soft and libs
   apt:
     name:  '{{ item }}'
     state: present
@@ -46,15 +34,15 @@
     - 'git'
     - 'mc'
 
-- name:       'Install aptitude'
+- name: Install aptitude
   apt:
-    name:     'aptitude'
-    state:    'installed'
+    name: 'aptitude'
+    state: present
 
-- name:       'Uninstall apache'
+- name: Uninstall apache
   apt:
-    pkg:      '{{ item }}'
-    state:    'removed'
+    name: '{{ item }}'
+    state: absent
   with_items:
     - 'apache2'
     - 'apache2.2-bin'
@@ -62,33 +50,34 @@
     - 'apache2-utils'
     - 'apache2-common'
 
-- name:       'Add devops user'
+- name: Add devops user
   user:
-    name:     '{{ deploy_user }}'
+    name: '{{ deploy_user }}'
     password: '{{deployer_pass}}'
     generate_ssh_key: yes
 
-
-- name:       'Add authorized devops keys'
+- name: Add authorized devops keys
   authorized_key:
-    user:     '{{ deploy_user }}'
-    key:      '{{ lookup("file", "files/keys/developers.pub") }}'
+    user: '{{ deploy_user }}'
+    key: '{{ lookup("file", "files/keys/developers.pub") }}'
 
-- name:       'Add deploy user to sudoers'
+- name: Add deploy user to sudoers
   lineinfile:
-    dest:     '/etc/sudoers'
-    regexp:   '{{ deploy_user }} ALL'
-    line:     '{{ deploy_user }} ALL=(ALL) NOPASSWD:ALL'
-    state:    'present'
+    dest: '/etc/sudoers'
+    regexp: '{{ deploy_user }} ALL'
+    line: '{{ deploy_user }} ALL=(ALL) NOPASSWD:ALL'
+    state: 'present'
 
-- name:       'Generate locale {{locale}}'
-  locale_gen: name='{{locale}}' state=present
+- name: Generate locale {{locale}}
+  locale_gen:
+    name: '{{locale}}'
+    state: present
 
-- name:       'Disallow password authentication'
+- name: Disallow password authentication
   lineinfile:
-    dest:     '/etc/ssh/sshd_config'
-    regexp:   '^PasswordAuthentication'
-    line:     'PasswordAuthentication no'
-    state:    'present'
+    dest: '/etc/ssh/sshd_config'
+    regexp: '^PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+    state: present
   notify:
     - restart SSH

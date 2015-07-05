@@ -1,7 +1,7 @@
 [webservers]
-	192.168.22.10 ansible_ssh_host=192.168.22.10
+	front-1.dev.local ansible_ssh_host=192.168.22.10
 [dbservers]
-	192.168.22.12 ansible_ssh_host=192.168.22.12
+	db-1.dev.local ansible_ssh_host=192.168.22.12
 
 
 [multi:children]
